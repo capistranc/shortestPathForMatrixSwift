@@ -87,55 +87,31 @@ func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,I
     let len = matrix.rowCount()
     var visitedHash:[Int:Int] = [:] // Store path cost at each node
     var visitQueue:[(Int, Int)] = [(index, 0)] //initialize queue for BFS
-    var totalVisited:[(Int,Int)] = []
     let cols = matrix.columnCount()
     var parents: [Int:(Int,Int)] = [:]
     
     //Assigns lowest possible cost to get to each node
     while !visitQueue.isEmpty {
         let (col,row) = visitQueue.removeFirst()
-        totalVisited.append((row,col))
         let hashnum = cols*row + col;
         let currVal = visitedHash[hashnum] ?? matrix[col,row]
         
-        let top = col-1, mid = col, bot = col+1
         let nextRow = row+1
         if nextRow < len {
-            if top >= 0 {
-                let val = currVal + matrix[top,nextRow] //Value of current node
-                let hashNum1 = cols*nextRow + top
+            for var j in -1...1 {
+                let nextCol = col + j
+                if nextCol < 0 || nextCol >= len {continue}
+                
+                let val = currVal + matrix[nextCol,nextRow] //Value of current node
+                let hashNum1 = cols*nextRow + nextCol
                 if visitedHash[hashNum1] == nil { // If node hasn't been visited yet, add it to the BFS queue
-                    visitQueue.append((top,nextRow))
+                    visitQueue.append((nextCol,nextRow))
                 }
                 
                 let cost = visitedHash[hashNum1] ?? Int(INT_MAX); // Assign lowest cost to the node
                 if val < cost {
                     visitedHash[hashNum1] = min(val, cost)
                     parents[hashNum1] = (col,row) //Assign parent of lowest cost to currentNode
-                }
-            }
-            
-            let val = currVal + matrix[mid,nextRow]
-            let hashNum2 = cols*nextRow + mid
-            if visitedHash[hashNum2] == nil {
-                visitQueue.append((mid,nextRow))
-            }
-            let cost = visitedHash[hashNum2] ?? Int(INT_MAX);
-            if val < cost {
-                visitedHash[hashNum2] = min(val, cost)
-                parents[hashNum2] = (col,row)
-            }
-            
-            if bot < len {
-                let hashNum3 = cols*nextRow + bot
-                if visitedHash[hashNum3] == nil {
-                    visitQueue.append((bot,row+1))
-                }
-                let val = currVal + matrix[bot,nextRow]
-                let cost = visitedHash[hashNum3] ?? Int(INT_MAX);
-                if val < cost {
-                    visitedHash[hashNum3] = min(val, cost)
-                    parents[hashNum3] = (col,row)
                 }
             }
         }
@@ -145,8 +121,8 @@ func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,I
     let filteredHash = visitedHash.filter{$0.key >= len * (cols-1)}
     let minValuePair = filteredHash.sorted{$0.value < $1.value}.first
     
-    let minKey = minValuePair?.key ?? 404404404
-    let minCost = minValuePair?.value ?? 404404404
+    let minKey = minValuePair?.key ?? Int(INTMAX_MAX)
+    let minCost = minValuePair?.value ?? Int(INTMAX_MAX)
     let endRow = minKey / cols
     let endCol = minKey % cols
     
@@ -190,10 +166,11 @@ class shortestPathOperation:Operation {
     }
 }
 
+
+
 func multiThreadShortestPath(){
-    
-    var matrix = buildMatrix(size: 10);
-    shortestPathFromIndex(for: &matrix, index: 2)
+    var matrix = buildMatrix(size: 5);
+//    shortestPathFromIndex(for: &matrix, index: 2)
 //    print(matrix)
     
     var ops:[Operation] = []
