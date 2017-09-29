@@ -83,7 +83,7 @@ func buildMatrix(size:Int) -> Array2D<Int>{
 
 //Find shortest from a specified row from the left side of the array to the right side of the array
 
-func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,Int)], Int){ 
+func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,Int)], Int){
     let len = matrix.rowCount()
     var visitedHash:[Int:Int] = [:] // Store path cost at each node
     var visitQueue:[(Int, Int)] = [(index, 0)] //initialize queue for BFS
@@ -168,16 +168,12 @@ class shortestPathOperation:Operation {
 
 
 func multiThreadShortestPath(){
-    var matrix = buildMatrix(size: 5);
-//    shortestPathFromIndex(for: &matrix, index: 2)
-//    print(matrix)
+    var matrix = buildMatrix(size: 10);
     
     var ops:[Operation] = []
     for i in 0..<matrix.rowCount() {
         let op = shortestPathOperation(withIndex: i, matrix: &matrix)
         ops.append(op)
-        //        guard i > 0 else {continue}
-        //        op.addDependency(ops[i-1])
     }
     let queue = OperationQueue()
     queue.addOperations(ops, waitUntilFinished: true)
