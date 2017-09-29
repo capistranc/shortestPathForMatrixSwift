@@ -83,7 +83,7 @@ func buildMatrix(size:Int) -> Array2D<Int>{
 
 //Find shortest from a specified row from the left side of the array to the right side of the array
 
-func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,Int)], Int){ // Assuming a square matrix of max size 10x10
+func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,Int)], Int){ 
     let len = matrix.rowCount()
     var visitedHash:[Int:Int] = [:] // Store path cost at each node
     var visitQueue:[(Int, Int)] = [(index, 0)] //initialize queue for BFS
@@ -101,7 +101,6 @@ func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,I
             for var j in -1...1 {
                 let nextCol = col + j
                 if nextCol < 0 || nextCol >= len {continue}
-                
                 let val = currVal + matrix[nextCol,nextRow] //Value of current node
                 let hashNum1 = cols*nextRow + nextCol
                 if visitedHash[hashNum1] == nil { // If node hasn't been visited yet, add it to the BFS queue
@@ -114,8 +113,8 @@ func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,I
                     parents[hashNum1] = (col,row) //Assign parent of lowest cost to currentNode
                 }
             }
-        }
-    }
+        }//End of If statement
+    }//end of WhileLoop
     
     //Get the shortest path
     let filteredHash = visitedHash.filter{$0.key >= len * (cols-1)}
@@ -133,7 +132,7 @@ func shortestPathFromIndex(for matrix:inout Array2D<Int>, index:Int) -> ([(Int,I
         path.insert((row,col), at: 0)
         nodeHash = cols*row + col;
     }
-    
+
 //    print("Optimal path from (0,\(index)) is: ", path)
 //    print("Cost of this path is: \(minCost)")
     return (path, minCost)
